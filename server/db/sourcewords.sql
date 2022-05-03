@@ -1,0 +1,4 @@
+CREATE TABLE IF NOT EXISTS sourcewords (
+  id SERIAL NOT NULL PRIMARY KEY,
+  word VARCHAR(20)
+);
