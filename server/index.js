@@ -12,9 +12,20 @@ app.use(express.static(path.join(__dirname, '../client/dist')));
 
 app.get('/starter_letters', (req, res) => {
   const word = letters[Math.floor(Math.random() * letters.length)];
-  console.log(word);
+  const regexSearch = `^(?=.*${word[0]})${word}{4,}$`;
   res.send(word);
 });
+
+app.get('/all_matches/:letters', (req, res) => {
+  const { letters } = req.params;
+  const regexSearch = `^(?=.*${letters[0]})[${letters}]{4,}$`;
+  console.log(regexSearch);
+  axios.get(`https://wordsapiv1.p.rapidapi.com/words/?letterPattern=${regexSearch}&limit=500`, { headers: { 'X-RapidAPI-Host': 'wordsapiv1.p.rapidapi.com', 'X-RapidAPI-Key': API_KEY } })
+    .then(response => {
+      res.send(response.data.results);
+    })
+    .catch(err => console.log(err));
+})
 
 app.get('/lookup/:word', (req, res) => {
   const { word } = req.params;

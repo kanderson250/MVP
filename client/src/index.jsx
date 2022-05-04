@@ -53,49 +53,54 @@ function App() {
   const [bank, setBank] = useState([]);
   const [words, setWords] = useState([]);
   const [score, setScore] = useState(0);
-  const [panagrams, setPanagrams] = useState([]);
+  const [allWords, setAllWords] = useState([]);
+
+  //startup function: retrieves the list of letters and initializes a list of permissible answers from the API.
 
   useEffect(() => {
     axios.get('/starter_letters')
-      .then((response) => setBank(response.data))
+      .then((response) => {
+        setBank(response.data)
+        return axios.get(`/all_matches/${response.data.join('')}`)
+      })
+      .then(response => makeWordList(response.data.data))
       .catch((err) => console.log(err));
   }, []);
 
+  //helper function to process the permissible answers returned by the API.
+  const makeWordList = (wordList) => {
+    let unorderedWordList = {};
+    wordList.forEach(word => list[word] = { found: false, definition: null});
+    setAllWords(unorderedWordList);
+  }
+
+  //toggles a found word to 'true', toggles on 'panagram' if it is one, and adds its point value to score.
   const addWord = (wordData) => {
-    const newWords = [...words];
-    newWords.push(wordData);
+    const { word, definitions } = wordData;
+    const newWords = {...allWords};
+    newWords[word].found = true;
+    newWords[word].definition = definitions[0];
     setWords(newWords);
+    let bonus = 0;
+    if (panagram(word)) {
+      allWords[word].found = 'panagram';
+      bonus = 7;
+    }
+    setScore(score + word.length + bonus );
   };
 
+  //boolean indicating if word is a panagram.
   const panagram = (word) => {
     let allLetters = true;
     bank.forEach(letter => {
       if (word.indexOf(letter) === -1) allLetters = false;
     })
-    if (allLetters) {panagrams.push(word);}
     return allLetters;
-
   };
 
-  const scoreWord = (word) => {
-    const bonus = panagram(word) ? 7 : 0;
-    setScore(score + word.length + bonus);
-  };
+  //helper function handling potatoboi easter egg
 
-  const checkWord = (word) => {
-    for (const char of word) {
-      if (!bank.includes(char)) {
-        return false;
-      }
-      if (!word.includes(bank[0])) {
-        return false;
-      }
-    }
-    if (words.map(wordData => wordData.word).includes(word)) {
-      return false;
-    }
-    return true;
-  };
+  const handlePotato = () => {}
 
   const submitWord = (word) => {
     if (word === 'potatoboi') {
@@ -104,7 +109,7 @@ function App() {
       potato.definitions = [{ definition: 'Potato get em, potato got em. Potato top, potato bottom.', partOfSpeech: 'noun'}];
       addWord(potato);
     }
-    if (word.length >= 4 && checkWord(word)) {
+    if (allWords[word] && !allWords[word].found) {
       axios.get(`/lookup/${word}`)
         .then((response) => {
           if (response.data) {
