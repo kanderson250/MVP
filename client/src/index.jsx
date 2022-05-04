@@ -53,6 +53,7 @@ function App() {
   const [bank, setBank] = useState([]);
   const [words, setWords] = useState([]);
   const [score, setScore] = useState(0);
+  const [panagrams, setPanagrams] = useState([]);
 
   useEffect(() => {
     axios.get('/starter_letters')
@@ -71,7 +72,9 @@ function App() {
     bank.forEach(letter => {
       if (word.indexOf(letter) === -1) allLetters = false;
     })
+    if (allLetters) {panagrams.push(word);}
     return allLetters;
+
   };
 
   const scoreWord = (word) => {
@@ -121,7 +124,7 @@ function App() {
           <Wheel letters = {bank}/>
           <Input submitWord={submitWord} />
         </WheelAndInput>
-        <Found words={words} score = {score}/>
+        <Found words={words} score = {score} panagrams = {panagrams}/>
       </GameContainer>
     </AppContainer>
   );
