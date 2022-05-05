@@ -8,6 +8,7 @@ const Enter = styled.input`
   font-size: 1.2rem;
   width: 200px;
   font-weight: light;
+  text-align: center;
 `;
 
 function Input({submitWord}) {
@@ -20,6 +21,7 @@ function Input({submitWord}) {
   const handleSubmit = (e) => {
     e.preventDefault();
     submitWord(value);
+    setValue('');
   };
   return (
     <div>

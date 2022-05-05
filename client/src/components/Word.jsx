@@ -36,7 +36,7 @@ function Word({ wordData }) {
         <h4>
           {wordData.word}
         </h4>
-        <span>{`(${wordData.definitions[0]?.partOfSpeech}) ${wordData.definitions[0]?.definition}`}</span>
+        <span>{`(${wordData.definition?.partOfSpeech}) ${wordData.definition?.definition}`}</span>
 
       </Modal>
     </div>

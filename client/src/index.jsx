@@ -4,6 +4,8 @@ import axios from 'axios';
 import Input from './components/Input.jsx';
 import Found from './components/Found.jsx';
 import Wheel from './components/Wheel.jsx';
+import HintTable from './components/HintTable.jsx';
+import Modal from 'react-modal';
 import styled, { createGlobalStyle } from 'styled-components';
 
 const root = createRoot(document.getElementById('root'));
@@ -19,17 +21,29 @@ const GlobalStyleContainer = createGlobalStyle`
     font-weight: 500;
   }
 `;
+const modalStyles = {
+  content: {
+    fontFamily: 'Roboto',
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    right: 'auto',
+    bottom: 'auto',
+    marginRight: '-50%',
+    transform: 'translate(-50%, -50%)',
+  },
+};
 
 const AppContainer = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  margin-top: 150px;
 `;
 
 const Header = styled.h1`
   margin: 30px;
+  margin-top: 100px;
 `;
 
 const GameContainer = styled.div`
@@ -49,30 +63,66 @@ const WheelAndInput = styled.div`
   gap: 20px;
 `;
 
+const Button = styled.button`
+  font-family: Montserrat;
+  border-radius: 10px;
+  border: none;
+  background-color: black;
+  color: white;
+`;
+
 function App() {
   const [bank, setBank] = useState([]);
-  const [words, setWords] = useState([]);
+  const [foundWords, setFoundWords] = useState([]);
   const [score, setScore] = useState(0);
   const [allWords, setAllWords] = useState([]);
+  const [hintMatrix, setHintMatrix] = useState([]);
+  const [showHints, setShowHints] = useState(false);
 
-  //startup function: retrieves the list of letters and initializes a list of permissible answers from the API.
-
+  //Starts the app by fetching the list of letters and permissible answers from the API.
   useEffect(() => {
+    let bankLetters;
     axios.get('/starter_letters')
       .then((response) => {
-        setBank(response.data)
+        setBank(response.data);
+        bankLetters = response.data;
         return axios.get(`/all_matches/${response.data.join('')}`)
       })
-      .then(response => makeWordList(response.data.data))
+      .then(response => {
+        makeWordList(response.data.data);
+        generateHintMatrix(response.data.data, bankLetters);
+      })
       .catch((err) => console.log(err));
   }, []);
 
-  //helper function to process the permissible answers returned by the API.
+  //Processes the permissible answers returned by the API.
   const makeWordList = (wordList) => {
-    let unorderedWordList = {};
-    wordList.forEach(word => list[word] = { found: false, definition: null});
-    setAllWords(unorderedWordList);
-  }
+    let newList = {};
+    wordList.forEach(word => newList[word] = { found: false, definition: null});
+    setAllWords(newList);
+  };
+  //generates a matrix of hints to be turned into a hint table
+
+  const generateHintMatrix = (list, bank) => {
+    const positions = {};
+    const sorted = [...bank].sort();
+    sorted.forEach((char, index) => positions[char] = index);
+    let matrix = [[], [], [], [], [], [], []];
+    let maxLetters = 0;
+    list.forEach(word => {
+      let i = positions[word[0]];
+      let j = word.length;
+      matrix[i][j-4] = matrix[i][j-4] ? matrix[i][j-4] + 1 : 1;
+      maxLetters = Math.max(maxLetters, j-4);
+    } )
+    matrix.forEach(i => {
+      for (let j = 0; j <= maxLetters; j++) {
+        if (!i[j]) i[j] = 0;
+      }
+    });
+    setHintMatrix(matrix);
+  };
+
 
   //toggles a found word to 'true', toggles on 'panagram' if it is one, and adds its point value to score.
   const addWord = (wordData) => {
@@ -80,7 +130,11 @@ function App() {
     const newWords = {...allWords};
     newWords[word].found = true;
     newWords[word].definition = definitions[0];
-    setWords(newWords);
+    setAllWords(newWords);
+    const newFoundWords = [...foundWords];
+    newFoundWords.push({ word: word, definition: definitions[0]});
+    newFoundWords.sort((a, b) => a.word < b.word ? -1 : 1);
+    setFoundWords(newFoundWords);
     let bonus = 0;
     if (panagram(word)) {
       allWords[word].found = 'panagram';
@@ -89,7 +143,7 @@ function App() {
     setScore(score + word.length + bonus );
   };
 
-  //boolean indicating if word is a panagram.
+  //Indicates if word is a panagram.
   const panagram = (word) => {
     let allLetters = true;
     bank.forEach(letter => {
@@ -98,27 +152,30 @@ function App() {
     return allLetters;
   };
 
-  //helper function handling potatoboi easter egg
+  //Handles potatoboi easter egg
+  const handlePotato = () => {
+    const potato = {};
+    potato.word = 'potatoboi';
+    potato.definitions = [{ definition: 'Potato get em, potato got em. Potato top, potato bottom.', partOfSpeech: 'noun'}];
+    addWord(potato);
+  }
 
-  const handlePotato = () => {}
-
+  //Handles submission of user guess.
   const submitWord = (word) => {
-    if (word === 'potatoboi') {
-      const potato = {};
-      potato.word = 'potatoboi';
-      potato.definitions = [{ definition: 'Potato get em, potato got em. Potato top, potato bottom.', partOfSpeech: 'noun'}];
-      addWord(potato);
-    }
+    if (word === 'potatoboi') { handlePotato(); }
     if (allWords[word] && !allWords[word].found) {
       axios.get(`/lookup/${word}`)
         .then((response) => {
           if (response.data) {
             addWord(response.data);
-            scoreWord(word);
           }
         })
         .catch((err) => console.log(err));
     }
+  };
+
+  const toggleHints = () => {
+    setShowHints(!showHints);
   };
   return (
     <AppContainer>
@@ -129,8 +186,17 @@ function App() {
           <Wheel letters = {bank}/>
           <Input submitWord={submitWord} />
         </WheelAndInput>
-        <Found words={words} score = {score} panagrams = {panagrams}/>
+        <Found words={foundWords} score = {score}/>
       </GameContainer>
+      <Modal
+        isOpen={showHints}
+        contentLabel="Hint Modal"
+        onRequestClose = {toggleHints}
+        style = {modalStyles}
+      >
+        <HintTable hintMatrix = {hintMatrix} bank = {bank}/>
+      </Modal>
+      <Button onClick = {toggleHints}>Show Hints</Button>
     </AppContainer>
   );
 }
