@@ -51,7 +51,7 @@ const GameContainer = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: center;
-  align-items: flex-start;
+  align-items: center;
   gap: 150px;
   margin: 80px;
 `;
@@ -74,8 +74,7 @@ const Button = styled.button`
   font-family: Montserrat;
   border-radius: 10px;
   border: none;
-  background-color: black;
-  color: white;
+  background-color: rgb(166, 233, 255);
 `;
 
 function App() {
@@ -244,7 +243,7 @@ function App() {
           <Wheel letters = {bank}/>
           <Input submitWord={submitWord} />
         </WheelAndInput>
-        <Found words={foundWords} score = {score}/>
+        <Found words={foundWords} score = {score} pointTotal= {pointTotal}/>
       </GameContainer>
       <Modal
         isOpen={showHints}
