@@ -26,7 +26,7 @@ function Input({submitWord}) {
   return (
     <div>
       <form onSubmit={handleSubmit} >
-        <Enter type="text" placeholder = 'YOUR WORD HERE' value={value} onChange={handleChange} />
+        <Enter type="text" placeholder = 'Your word here' value={value} onChange={handleChange} />
       </form>
     </div>
   );

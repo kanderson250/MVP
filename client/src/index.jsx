@@ -85,6 +85,8 @@ function App() {
   const [allWords, setAllWords] = useState([]);
   const [hintMatrix, setHintMatrix] = useState([]);
   const [showHints, setShowHints] = useState(false);
+  const [showWordHint, setShowWordHint] = useState(false);
+  const [wordHint, setWordHint] = useState('');
   const [showRules, setShowRules] = useState(false);
   const [pointTotal, setPointTotal] = useState(0);
 
@@ -115,8 +117,8 @@ function App() {
     });
     setAllWords(newList);
   };
-  //generates a matrix of hints to be turned into a hint table
 
+  //generates a matrix of hints to be turned into a hint table
   const generateHintMatrix = (list, bank) => {
     const positions = {};
     const sorted = [...bank].sort();
@@ -200,6 +202,17 @@ function App() {
     }
   };
 
+  const getWordHint = () => {
+    toggleWordHint();
+    const notFoundWords = Object.keys(allWords).filter(word => !allWords[word].found);
+    console.log('length', notFoundWords.length);
+    const randomWord = notFoundWords[Math.floor(Math.random()*notFoundWords.length)];
+    console.log(randomWord);
+    axios.get(`/lookup/${randomWord}`)
+      .then((response) => setWordHint(response.data.definitions[0]?.definition))
+      .catch(err => console.log(err));
+  }
+
   const toggleHints = () => {
     setShowHints(!showHints);
   };
@@ -208,6 +221,15 @@ function App() {
     setShowRules(!showRules);
   };
 
+  const toggleWordHint = () => {
+    setShowWordHint(!showWordHint);
+  }
+
+  const clearWordHint = () => {
+    toggleWordHint();
+    setWordHint('');
+  }
+
   return (
     <AppContainer>
       <GlobalStyleContainer />
@@ -215,6 +237,7 @@ function App() {
       <ButtonBanner>
         <Button onClick = {toggleRules}>Rules</Button>
         <Button onClick = {toggleHints}> Hints</Button>
+        <Button onClick = {getWordHint}>Define a Missing Word</Button>
       </ButtonBanner>
       <GameContainer>
         <WheelAndInput>
@@ -245,6 +268,14 @@ function App() {
           All letters, including the center letter, may be repeated. </p>
           <p>Feeling stuck? Click  <b>'Hints'</b> to display the first letter and length of all the words in the puzzle.
           </p>
+      </Modal>
+      <Modal
+        isOpen={showWordHint}
+        contentLabel="Hint Modal"
+        onRequestClose = {clearWordHint}
+        style = {modalStyles}
+        id = 'hints'
+      > {wordHint}
       </Modal>
     </AppContainer>
   );
