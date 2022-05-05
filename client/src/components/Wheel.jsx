@@ -45,7 +45,7 @@ function Wheel({letters}){
         <polygon points="148,183.138438763306 52,183.138438763306 4,100 52,16.8615612366939 148,16.8615612366939 196,100"/>
       </Svg>
       {letters.map((letter, i) => (
-        <Letter row={positions[i][0]} col={positions[i][1]}>{letter.toUpperCase()}</Letter>
+        <Letter key = {letter} row={positions[i][0]} col={positions[i][1]}>{letter.toUpperCase()}</Letter>
       ))}
     </WheelGrid>
   );

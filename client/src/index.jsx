@@ -31,6 +31,7 @@ const modalStyles = {
     bottom: 'auto',
     marginRight: '-50%',
     transform: 'translate(-50%, -50%)',
+    width: '500px',
   },
 };
 
@@ -63,6 +64,12 @@ const WheelAndInput = styled.div`
   gap: 20px;
 `;
 
+const ButtonBanner = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 30px;
+`;
+
 const Button = styled.button`
   font-family: Montserrat;
   border-radius: 10px;
@@ -78,6 +85,8 @@ function App() {
   const [allWords, setAllWords] = useState([]);
   const [hintMatrix, setHintMatrix] = useState([]);
   const [showHints, setShowHints] = useState(false);
+  const [showRules, setShowRules] = useState(false);
+  const [pointTotal, setPointTotal] = useState(0);
 
   //Starts the app by fetching the list of letters and permissible answers from the API.
   useEffect(() => {
@@ -89,8 +98,10 @@ function App() {
         return axios.get(`/all_matches/${response.data.join('')}`)
       })
       .then(response => {
-        makeWordList(response.data.data);
-        generateHintMatrix(response.data.data, bankLetters);
+        console.log(response.data);
+        makeWordList(response.data);
+        generateHintMatrix(response.data, bankLetters);
+        scoreAll(response.data, bankLetters);
       })
       .catch((err) => console.log(err));
   }, []);
@@ -98,7 +109,10 @@ function App() {
   //Processes the permissible answers returned by the API.
   const makeWordList = (wordList) => {
     let newList = {};
-    wordList.forEach(word => newList[word] = { found: false, definition: null});
+    wordList.forEach(wordData => {
+      const { word, id } = wordData;
+      newList[word] = { found: false, definition: null, id: id};
+    });
     setAllWords(newList);
   };
   //generates a matrix of hints to be turned into a hint table
@@ -109,7 +123,8 @@ function App() {
     sorted.forEach((char, index) => positions[char] = index);
     let matrix = [[], [], [], [], [], [], []];
     let maxLetters = 0;
-    list.forEach(word => {
+    list.forEach(wordData => {
+      let word = wordData.word;
       let i = positions[word[0]];
       let j = word.length;
       matrix[i][j-4] = matrix[i][j-4] ? matrix[i][j-4] + 1 : 1;
@@ -123,28 +138,39 @@ function App() {
     setHintMatrix(matrix);
   };
 
+  //calculates point total for the word list
+  const scoreAll = (wordList, bank) => {
+    let total = 0;
+    wordList.forEach(wordData => {total += scoreWord(wordData.word, bank)});
+    setPointTotal(total);
+  };
 
   //toggles a found word to 'true', toggles on 'panagram' if it is one, and adds its point value to score.
   const addWord = (wordData) => {
+    //change the status of the word in the master word list.
     const { word, definitions } = wordData;
     const newWords = {...allWords};
     newWords[word].found = true;
     newWords[word].definition = definitions[0];
     setAllWords(newWords);
-    const newFoundWords = [...foundWords];
-    newFoundWords.push({ word: word, definition: definitions[0]});
-    newFoundWords.sort((a, b) => a.word < b.word ? -1 : 1);
+    //update the found word list.
+    const newFoundWords = Object.keys(newWords)
+      .filter(word => newWords[word].found)
+      .sort()
+      .map(word => ( { word, definition: newWords[word].definition, id: newWords[word].id }));
+    console.log(newFoundWords);
     setFoundWords(newFoundWords);
-    let bonus = 0;
-    if (panagram(word)) {
-      allWords[word].found = 'panagram';
-      bonus = 7;
-    }
-    setScore(score + word.length + bonus );
+    //add the new score.
+    setScore(score + scoreWord(word, bank));
   };
 
+  const scoreWord = (word, bank) => {
+    const bonus = panagram(word, bank) ? 7 : 0;
+    return word.length + bonus;
+  }
+
   //Indicates if word is a panagram.
-  const panagram = (word) => {
+  const panagram = (word, bank) => {
     let allLetters = true;
     bank.forEach(letter => {
       if (word.indexOf(letter) === -1) allLetters = false;
@@ -177,10 +203,19 @@ function App() {
   const toggleHints = () => {
     setShowHints(!showHints);
   };
+
+  const toggleRules = () => {
+    setShowRules(!showRules);
+  };
+
   return (
     <AppContainer>
       <GlobalStyleContainer />
       <Header>Spelling Spree</Header>
+      <ButtonBanner>
+        <Button onClick = {toggleRules}>Rules</Button>
+        <Button onClick = {toggleHints}> Hints</Button>
+      </ButtonBanner>
       <GameContainer>
         <WheelAndInput>
           <Wheel letters = {bank}/>
@@ -193,10 +228,24 @@ function App() {
         contentLabel="Hint Modal"
         onRequestClose = {toggleHints}
         style = {modalStyles}
+        id = 'hints'
       >
         <HintTable hintMatrix = {hintMatrix} bank = {bank}/>
       </Modal>
-      <Button onClick = {toggleHints}>Show Hints</Button>
+      <Modal
+        isOpen={showRules}
+        contentLabel="Rule Modal"
+        onRequestClose = {toggleRules}
+        id = 'rules'
+        style = {modalStyles}
+      >
+        <h2>Make as many words as you can using the Word Wheel.</h2>
+        <p>The Word Wheel displays seven letters, which you must use to create words.
+          <b> The center letter is required. </b>
+          All letters, including the center letter, may be repeated. </p>
+          <p>Feeling stuck? Click  <b>'Hints'</b> to display the first letter and length of all the words in the puzzle.
+          </p>
+      </Modal>
     </AppContainer>
   );
 }

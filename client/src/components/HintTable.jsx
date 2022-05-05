@@ -2,7 +2,9 @@ import React from 'react';
 import styled from 'styled-components';
 
 const Div = styled.div`
-
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `;
 
 const StyledHintTable = styled.div`
@@ -21,12 +23,12 @@ function HintTable({hintMatrix, bank}){
   let numbers = Array(hintMatrix[0]?.length).fill(4).map((item, i) => item + i);
   return (
     <Div>
-      <h3> Word Length Distribution</h3>
+      <h3> Word Starts {'&'} Lengths </h3>
       <StyledHintTable>
       { sorted.map((char, i) => <StyledEntry col='1' row={i+2}><b>{char.toUpperCase()}</b></StyledEntry>)}
       { numbers.map((item, j) => <StyledEntry col = {j+2} row = '1'><b>{item}</b></StyledEntry>)}
       { hintMatrix.map((row, i) => {
-          return row.map((value,j) => <StyledEntry row = {i + 2} col = {j + 2}>{value}</StyledEntry>);
+          return row.map((value,j) => <StyledEntry key = {`${i+2, j+2}`} row = {i + 2} col = {j + 2}>{value}</StyledEntry>);
       })
       }
       </StyledHintTable>

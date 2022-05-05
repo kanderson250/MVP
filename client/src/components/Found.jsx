@@ -21,7 +21,7 @@ function Found({ words, score }) {
     <StyledFound>
       <h3>You have found {words.length} { words.length === 1 ? ' word' : ' words'}, worth { score } points. </h3>
       <StyledWordList>
-        { words.length ? words.map((wordData) => <Word wordData={wordData} />) : null}
+        { words.length ? words.map((wordData) => <Word key = {wordData.id} wordData={wordData} />) : null}
       </StyledWordList>
     </StyledFound>
   );
