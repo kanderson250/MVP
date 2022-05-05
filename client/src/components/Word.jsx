@@ -16,6 +16,10 @@ const modalStyles = {
   },
 };
 
+const StyledWord = styled.div`
+  width: 120px;
+`;
+
 function Word({ wordData }) {
   const [showDefs, setShowDefs] = useState(false);
 
@@ -25,7 +29,7 @@ function Word({ wordData }) {
   };
 
   return (
-    <div>
+    <StyledWord>
       <div onClick = {toggleDefinitions}>{wordData.word}</div>
       <Modal
         isOpen={showDefs}
@@ -39,7 +43,7 @@ function Word({ wordData }) {
         <span>{`(${wordData.definition?.partOfSpeech}) ${wordData.definition?.definition}`}</span>
 
       </Modal>
-    </div>
+    </StyledWord>
     );
 
 

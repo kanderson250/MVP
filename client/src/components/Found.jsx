@@ -10,13 +10,12 @@ const StyledFound = styled.div`
 const StyledWordList = styled.div`
   display: flex;
   flex-direction: column;
+  flex-wrap: wrap;
   width: 400px;
   height: 200px;
-  background-color: lightgray;
   gap: 5px;
-  flex-wrap: wrap;
   align-items: flex-start;
-  overflow-x: scroll;
+  overflow-x: auto;
 `;
 
 function Found({ words, score, pointTotal }) {
@@ -33,12 +32,15 @@ function Found({ words, score, pointTotal }) {
   } else {
     currentIndex = 4;
   }
+  // let colNum = Math.ceil(words.length / 8);
+  // const cols = Array(colNum).fill(0).map((i, index) => index);
   return (
     <StyledFound>
       <h3>You have found {words.length} { words.length === 1 ? ' word' : ' words'}, worth { score } points. </h3>
       <Slider currentIndex = {currentIndex}/>
       <StyledWordList>
-        { words.length ? words.map((wordData) => <Word key = {wordData.id} wordData={wordData} />) : null}
+        {/* { cols.map(i => <WordColumn wordList = {words.slice(i*8, (i+1) * 8)}/>)} */}
+        { words.map((wordData) => <Word key = {wordData.id} wordData={wordData} />)}
       </StyledWordList>
     </StyledFound>
   );

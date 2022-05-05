@@ -4,7 +4,7 @@ import styled from 'styled-components';
 const Slider = ({currentIndex}) => {
 
   return (
-    <svg viewBox = '0 0 104 9' width = '400px'>
+    <svg viewBox = '0 0 104 9' width = '340px'>
       <defs>
         <linearGradient id="rectangle-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
           <stop offset = {`${currentIndex * 25}%`} stopColor = "rgb(0, 191, 255)"></stop>

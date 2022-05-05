@@ -265,7 +265,7 @@ function App() {
         <p>The Word Wheel displays seven letters, which you must use to create words.
           <b> The center letter is required. </b>
           All letters, including the center letter, may be repeated. </p>
-          <p>Feeling stuck? Click  <b>'Hints'</b> to display the first letter and length of all the words in the puzzle.
+          <p>Feeling stuck? Click  <b>Hints</b> to display the first letter and length of all the words in the puzzle, or <b>Define a Missing Word</b> to view a definition of a word you haven't found.
           </p>
       </Modal>
       <Modal
