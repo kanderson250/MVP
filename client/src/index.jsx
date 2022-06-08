@@ -254,9 +254,9 @@ function App() {
       <GlobalStyleContainer />
       <Header>Spelling Spree</Header>
       <ButtonBanner>
-        <Button onClick = {toggleRules}>Rules</Button>
-        <Button onClick = {toggleHints}> Hints</Button>
-        <Button onClick = {getWordHint}>Define a Missing Word</Button>
+        <Button onClick = {toggleRules} id="rules-button">Rules</Button>
+        <Button onClick = {toggleHints} id="hint-table-button"> Hints</Button>
+        <Button onClick = {getWordHint} id="word-hint-button">Define a Missing Word</Button>
       </ButtonBanner>
       <GameContainer>
         <WheelAndInput>
@@ -268,10 +268,10 @@ function App() {
       </GameContainer>
       <Modal
         isOpen={showHints}
-        contentLabel="Hint Modal"
+        contentLabel="Hint Table Modal"
         onRequestClose = {toggleHints}
         style = {modalStyles}
-        id = 'hints'
+        id = 'hint-table-modal'
       >
         <HintTable hintMatrix = {hintMatrix} bank = {bank}/>
       </Modal>
@@ -279,7 +279,7 @@ function App() {
         isOpen={showRules}
         contentLabel="Rule Modal"
         onRequestClose = {toggleRules}
-        id = 'rules'
+        id = 'rule-modal'
         style = {modalStyles}
       >
         <h2>Make as many words as you can using the Word Wheel.</h2>
@@ -291,10 +291,10 @@ function App() {
       </Modal>
       <Modal
         isOpen={showWordHint}
-        contentLabel="Hint Modal"
+        contentLabel="Definition Hint Modal"
         onRequestClose = {clearWordHint}
         style = {modalStyles}
-        id = 'hints'
+        id = 'word-hint-modal'
       > {wordHint}
       </Modal>
     </AppContainer>

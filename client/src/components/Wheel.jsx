@@ -38,7 +38,7 @@ Wheel.defaultProps = {
 function Wheel({ letters }) {
   const positions = [[3, 3], [1, 3], [2, 5], [4, 5], [5, 3], [4, 1], [2, 1]];
   return (
-    <WheelGrid>
+    <WheelGrid id="word-wheel">
       <Svg id="outer-wheel" width="200px" stroke="rgb(0, 191, 255, .5)" fill="rgb(0, 191, 255, .3)" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
         <polygon points="148,183.138438763306 52,183.138438763306 4,100 52,16.8615612366939 148,16.8615612366939 196,100 148,183.138438763306 52,16.8615612366939 148,16.8615612366939 52,183.138438763306 4,100 196,100" />
       </Svg>
@@ -50,6 +50,7 @@ function Wheel({ letters }) {
           key={letter}
           row={positions[i][0]}
           col={positions[i][1]}
+          id={`letter-${positions[i][0]}-${positions[i][1]}`}
         >
           {letter.toUpperCase()}
         </Letter>
