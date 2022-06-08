@@ -11,7 +11,15 @@ const Enter = styled.input`
   text-align: center;
 `;
 
-function Input({submitWord}) {
+Input.propTypes = {
+  submitWord: PropTypes.func,
+};
+
+Input.defaultProps = {
+  submitWord: () => {},
+};
+
+function Input({ submitWord }) {
   const [value, setValue] = useState('');
 
   const handleChange = (e) => {
@@ -25,15 +33,11 @@ function Input({submitWord}) {
   };
   return (
     <div>
-      <form onSubmit={handleSubmit} >
-        <Enter type="text" placeholder = 'Your word here' value={value} onChange={handleChange} />
+      <form onSubmit={handleSubmit}>
+        <Enter type="text" placeholder="Your word here" value={value} onChange={handleChange} />
       </form>
     </div>
   );
 }
-
-Input.propTypes = {
-  submitWord: PropTypes.func
-};
 
 export default Input;

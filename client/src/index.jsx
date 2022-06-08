@@ -6,7 +6,9 @@ import Found from './components/Found.jsx';
 import Wheel from './components/Wheel.jsx';
 import HintTable from './components/HintTable.jsx';
 import Modal from 'react-modal';
+import { FiRefreshCw } from 'react-icons/fi';
 import styled, { createGlobalStyle } from 'styled-components';
+import arrayShuffle from 'array-shuffle';
 
 const root = createRoot(document.getElementById('root'));
 
@@ -75,6 +77,15 @@ const Button = styled.button`
   border-radius: 10px;
   border: none;
   background-color: rgb(166, 233, 255);
+`;
+
+const ShuffleDiv = styled.div`
+  height: 35px;
+  width: 35px;
+  border-radius: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 function App() {
@@ -151,6 +162,10 @@ function App() {
     //change the status of the word in the master word list.
     const { word, definitions } = wordData;
     const newWords = {...allWords};
+    //only applies in the case the user has found potatoboi
+    if (!newWords[word]) {
+      newWords[word] = {};
+    }
     newWords[word].found = true;
     newWords[word].definition = definitions[0];
     setAllWords(newWords);
@@ -229,6 +244,11 @@ function App() {
     setWordHint('');
   }
 
+  const shuffleLetters = () => {
+    const newBank = [bank[0], ...arrayShuffle(bank.slice(1))];
+    setBank(newBank);
+  };
+
   return (
     <AppContainer>
       <GlobalStyleContainer />
@@ -240,6 +260,7 @@ function App() {
       </ButtonBanner>
       <GameContainer>
         <WheelAndInput>
+          <ShuffleDiv onClick = {shuffleLetters}><FiRefreshCw size = '20'/></ShuffleDiv>
           <Wheel letters = {bank}/>
           <Input submitWord={submitWord} />
         </WheelAndInput>
@@ -281,3 +302,6 @@ function App() {
 }
 
 root.render(<App />);
+export default App;
+
+

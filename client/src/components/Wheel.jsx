@@ -11,12 +11,6 @@ const WheelGrid = styled.div`
   margin: 20px;
 `;
 
-const Dummy = styled.div`
-  grid-row-start: 3;
-  grid-row-end: 4;
-  grid-column-start: 4;
-  grid-column-end: 5;
-`;
 const Letter = styled.div`
   font-size: 1.5rem;
   font-weight: 400;
@@ -33,26 +27,35 @@ const Svg = styled.svg`
   grid-row-end: span 1;
 `;
 
+Wheel.propTypes = {
+  letters: PropTypes.array,
+};
 
-function Wheel({letters}){
-  const positions = [[3, 3], [1, 3], [2,5], [4,5], [5,3], [4,1], [2,1]];
+Wheel.defaultProps = {
+  letters: [],
+};
+
+function Wheel({ letters }) {
+  const positions = [[3, 3], [1, 3], [2, 5], [4, 5], [5, 3], [4, 1], [2, 1]];
   return (
     <WheelGrid>
-      <Svg width='200px' stroke = 'rgb(0, 191, 255, .5)' fill = 'rgb(0, 191, 255, .3)' viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-        <polygon points="148,183.138438763306 52,183.138438763306 4,100 52,16.8615612366939 148,16.8615612366939 196,100 148,183.138438763306 52,16.8615612366939 148,16.8615612366939 52,183.138438763306 4,100 196,100"/>
+      <Svg id="outer-wheel" width="200px" stroke="rgb(0, 191, 255, .5)" fill="rgb(0, 191, 255, .3)" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="148,183.138438763306 52,183.138438763306 4,100 52,16.8615612366939 148,16.8615612366939 196,100 148,183.138438763306 52,16.8615612366939 148,16.8615612366939 52,183.138438763306 4,100 196,100" />
       </Svg>
-      <Svg width= '60px' fill = 'rgb(0, 191, 255, .5)' viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-        <polygon points="148,183.138438763306 52,183.138438763306 4,100 52,16.8615612366939 148,16.8615612366939 196,100"/>
+      <Svg id="inner-wheel" width="60px" fill="rgb(0, 191, 255, .5)" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="148,183.138438763306 52,183.138438763306 4,100 52,16.8615612366939 148,16.8615612366939 196,100" />
       </Svg>
       {letters.map((letter, i) => (
-        <Letter key = {letter} row={positions[i][0]} col={positions[i][1]}>{letter.toUpperCase()}</Letter>
+        <Letter
+          key={letter}
+          row={positions[i][0]}
+          col={positions[i][1]}
+        >
+          {letter.toUpperCase()}
+        </Letter>
       ))}
     </WheelGrid>
   );
 }
-
-Wheel.propTypes = {
-  letters: PropTypes.array
-};
 
 export default Wheel;

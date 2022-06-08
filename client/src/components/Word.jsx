@@ -20,6 +20,12 @@ const StyledWord = styled.div`
   width: 120px;
 `;
 
+Word.propTypes = {
+  wordData: PropTypes.object
+};
+
+
+
 function Word({ wordData }) {
   const [showDefs, setShowDefs] = useState(false);
 
@@ -47,10 +53,6 @@ function Word({ wordData }) {
     );
 
 
-}
-
-Word.propTypes = {
-  wordData: PropTypes.object
 };
 
 export default Word;

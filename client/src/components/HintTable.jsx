@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import PropTypes from 'prop-types';
 
 const Div = styled.div`
   display: flex;
@@ -17,6 +18,16 @@ const StyledEntry = styled.div`
   grid-column: ${(props) => (props.col)} / span 1;
   grid-row: ${(props) => (props.row)} / span 1;
 `;
+
+HintTable.propTypes = {
+  hintMatrix: PropTypes.array,
+  bank: PropTypes.array,
+};
+
+HintTable.defaultProps = {
+  hintMatrix: [],
+  bank: [],
+};
 
 function HintTable({hintMatrix, bank}){
   const sorted = [...bank].sort();
