@@ -3,10 +3,16 @@
 Spelling Spree is an end-to-end recreation of the New York Times Spelling Bee. This word puzzle presents users with a wheel of letters, from which they must build as many words as possible - always using the center letter of the puzzle.
 
 ## App Demo
+Welcome to Spelling Spree! Try to find as many words possible using the letters in the wheel. Found words will appear alphabetically to the right, with points appearing above the words. Shuffle the letters for a fresh perspective.
+![](https://media.giphy.com/media/VxaF0B14WOhkQDBaUC/giphy.gif)
 
+Click on found words to recall their definitions (...for those moments you take a wild guess, or can't remember what a word actually means!)
+![](https://media.giphy.com/media/ek1CmCcwfowVA0bbBG/giphy.gif)
 
-Stuck? Spelling Spree includes a **Define a Missing Word** feature, which gives an anonymous definition of a word the user has not found.
+Lost or stuck? Read the **Rules**, or click **Hints** to display a table of answers organized by length and starting letter. 
+![](https://media.giphy.com/media/DhAgL7qz7nQDixCscX/giphy.gif)
 
+Bonus- Spelling Spree also includes a **Define a Missing Word** feature, which gives an anonymous definition of a word not yet found.
 ![](https://media.giphy.com/media/r0nVgr9UjcjWR68TEN/giphy.gif)
 
 ## Tech Stack
